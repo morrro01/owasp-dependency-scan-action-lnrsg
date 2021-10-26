@@ -58,11 +58,11 @@ jobs:
           echo "::set-output name=image::$image"
           echo "::set-output name=version::$version"
 
-      - name: ⛏️ Extract Changelog
-        id: extractChangelog
-        uses: mikepenz/release-changelog-builder-action@v2.4.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #- name: ⛏️ Extract Changelog
+      #  id: extractChangelog
+      #  uses: mikepenz/release-changelog-builder-action@v2.4.1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🔨 Check Image Exists
         id: checkImageExists
@@ -158,7 +158,7 @@ jobs:
       - name: 🚀 Release
         uses: ncipollo/release-action@v1
         with:
-          body: "${{ needs.prepare-release.outputs.changelog }}"
+          #body: "${{ needs.prepare-release.outputs.changelog }}"
           commit: ${{ env.GITHUB_SHA }}
-          tag: "v${{ needs.prepare-release.outputs.buildVersion }}"
+          tag: "v${{ needs.prepare-release.outputs.imageVersion }}"
           token: ${{ secrets.GITHUB_TOKEN }}
