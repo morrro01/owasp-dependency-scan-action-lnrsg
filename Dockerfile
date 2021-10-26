@@ -8,8 +8,5 @@ LABEL repository="https://github.com/morrro01/owasp-dependency-scan-action-lnrsg
     com.github.actions.color="green"
 USER root
 RUN apk add --update nodejs
-RUN ls -la
-WORKDIR /action
-COPY lib/index.js .
-RUN ls -la
+COPY ./action/ /action/
 ENTRYPOINT [ "node", "/action/index.js" ]
