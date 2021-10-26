@@ -7,9 +7,39 @@ on:
     branches: [ main ]
 
 jobs:
-  prepare:
-    name: Prepare
+  test:
+    name: Test
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: 📚 Checkout
+        uses: actions/checkout@v2
+
+      - name: 🧱 Cache Dependencies
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles( 'package.json' )}}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: ⚙️ Install Dependencies
+        run: yarn
+
+      - name: 🔬 Test
+        run: yarn test-ci
+
+      - name: 🔬 Report
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          files: jest-junit/**/*.xml
+          comment_title: "Jest Unit Test Results"
+          comment_mode: "update last"
+
+  prepare-release:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
     outputs:
       image: ${{ steps.extractImageVersion.outputs.image }}
       changelog: ${{ steps.extractChangelog.outputs.changelog }}
@@ -44,39 +74,9 @@ jobs:
             echo "::set-output name=exists::true"
           fi
 
-  test:
-    name: Test
-    needs: [ prepare ]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: 📚 Checkout
-        uses: actions/checkout@v2
-
-      - name: 🧱 Cache Dependencies
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles( 'package.json' )}}
-          restore-keys: ${{ runner.os }}-node-
-
-      - name: ⚙️ Install Dependencies
-        run: yarn
-
-      - name: 🔬 Test
-        run: yarn test-ci
-
-      - name: 🔬 Report
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          files: jest-junit/**/*.xml
-          comment_title: "Jest Unit Test Results"
-          comment_mode: "update last"
-
-  transpile:
-    name: Transpile
-    needs: [ prepare ]
+  build-js:
+    name: Build JavaScript
+    needs: [ prepare-release ]
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
 
@@ -106,7 +106,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [ prepare, transpile ]
+    needs: [ prepare-release, build-js ]
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
 
@@ -138,8 +138,8 @@ jobs:
             type=match,pattern=(v\d+),group=1
             type=match,pattern=(v\d+.\d+),group=1
             type=match,pattern=(v\d+.\d+.\d+),group=1
-            type=semver,pattern=v{{major}},value=${{ needs.prepare.outputs.imageVersion }}.0
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.prepare.outputs.imageVersion }}.0
+            type=semver,pattern=v{{major}},value=${{ needs.prepare-release.outputs.imageVersion }}.0
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.prepare-release.outputs.imageVersion }}.0
 
       - name: 📦 Fetch Artifact
         uses: actions/download-artifact@v2
@@ -158,7 +158,7 @@ jobs:
       - name: 🚀 Release
         uses: ncipollo/release-action@v1
         with:
-          body: "${{ needs.prepare.outputs.changelog }}"
+          body: "${{ needs.prepare-release.outputs.changelog }}"
           commit: ${{ env.GITHUB_SHA }}
-          tag: "v${{ needs.prepare.outputs.buildVersion }}"
+          tag: "v${{ needs.prepare-release.outputs.buildVersion }}"
           token: ${{ secrets.GITHUB_TOKEN }}
