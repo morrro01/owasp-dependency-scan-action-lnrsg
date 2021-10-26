@@ -1,84 +1,38 @@
-name: CI/CD
+name: Build & Deploy
 
 on:
-  pull_request:
-    branches: [ main ]
   push:
     branches: [ main ]
 
 jobs:
-  test:
-    name: Test
+  prepare:
+    name: Prepare
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: 📚 Checkout
-        uses: actions/checkout@v2
-
-      - name: 🧱 Cache Dependencies
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles( 'package.json' )}}
-          restore-keys: ${{ runner.os }}-node-
-
-      - name: ⚙️ Install Dependencies
-        run: yarn
-
-      - name: 🔬 Test
-        run: yarn test-ci
-
-      - name: 🔬 Report
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          files: jest-junit/**/*.xml
-          comment_title: "Jest Unit Test Results"
-          comment_mode: "update last"
-
-  prepare-release:
-    name: Prepare Release
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
     outputs:
-      image: ${{ steps.extractImageVersion.outputs.image }}
-      changelog: ${{ steps.extractChangelog.outputs.changelog }}
-      imageExists: ${{ steps.checkImageExists.outputs.exists }}
+      #changelog: ${{ steps.extractChangelog.outputs.changelog }}
       imageVersion: ${{ steps.extractImageVersion.outputs.version }}
 
     steps:
       - name: 📚 Checkout
         uses: actions/checkout@v2
 
-      - name: 🔨 Extract Image and Version
+      - name: 🔨 Extract Image Version
         id: extractImageVersion
         run: |
           image=$(grep -A 10 "^runs:" action.yaml | grep -E "\s+image: 'docker://ghcr.io/morrro01/owasp-dependency-scan-action-lnrsg:" | sed -E -e "s/^\s+image:\s*'docker:\/\///" -e "s/'\s*$//")
           version=$(cut -d : -f 2 <<< "$image")
-          echo "::set-output name=image::$image"
           echo "::set-output name=version::$version"
 
-      - name: ⛏️ Extract Changelog
-        id: extractChangelog
-        uses: mikepenz/release-changelog-builder-action@v2.4.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #- name: ⛏️ Extract Changelog
+      #  id: extractChangelog
+      #  uses: mikepenz/release-changelog-builder-action@v2.4.1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🔨 Check Image Exists
-        id: checkImageExists
-        env:
-          DOCKER_CLI_EXPERIMENTAL: enabled
-        shell: bash
-        run: |
-          if docker manifest inspect '${{ steps.extractImageVersion.outputs.image }}'; then
-            echo "::set-output name=exists::true"
-          fi
-
-  build-js:
-    name: Build JavaScript
-    needs: [ prepare-release ]
+  build:
+    name: Build
+    needs: [ prepare ]
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
 
     steps:
       - name: 📚 Checkout
@@ -105,10 +59,9 @@ jobs:
           path: lib/
 
   deploy:
-    name: Deploy to GitHub
-    needs: [ prepare-release, build-js ]
+    name: Deploy
+    needs: [ prepare, build ]
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
 
     steps:
       - name: 📚 Checkout
@@ -138,8 +91,8 @@ jobs:
             type=match,pattern=(v\d+),group=1
             type=match,pattern=(v\d+.\d+),group=1
             type=match,pattern=(v\d+.\d+.\d+),group=1
-            type=semver,pattern=v{{major}},value=${{ needs.prepare-release.outputs.imageVersion }}.0
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.prepare-release.outputs.imageVersion }}.0
+            type=semver,pattern=v{{major}},value=${{ needs.prepare.outputs.imageVersion }}.0
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.prepare.outputs.imageVersion }}.0
 
       - name: 📦 Fetch Artifact
         uses: actions/download-artifact@v2
@@ -158,7 +111,7 @@ jobs:
       - name: 🚀 Release
         uses: ncipollo/release-action@v1
         with:
-          body: "${{ needs.prepare-release.outputs.changelog }}"
+          #body: "${{ needs.prepare.outputs.changelog }}"
           commit: ${{ env.GITHUB_SHA }}
-          tag: "v${{ needs.prepare-release.outputs.buildVersion }}"
+          tag: "v${{ needs.prepare.outputs.imageVersion }}"
           token: ${{ secrets.GITHUB_TOKEN }}
