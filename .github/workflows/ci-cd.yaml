@@ -3,6 +3,8 @@ name: CI/CD
 on:
   pull_request:
     branches: [ main ]
+  push:
+    branches: [ main ]
 
 jobs:
   prepare:
@@ -10,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.extractImageVersion.outputs.image }}
+      changelog: ${{ steps.extractChangelog.outputs.changelog }}
       imageExists: ${{ steps.checkImageExists.outputs.exists }}
       imageVersion: ${{ steps.extractImageVersion.outputs.version }}
 
@@ -25,6 +28,12 @@ jobs:
           echo "::set-output name=image::$image"
           echo "::set-output name=version::$version"
 
+      - name: ⛏️ Extract Changelog
+        id: extractChangelog
+        uses: mikepenz/release-changelog-builder-action@v2.4.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: 🔨 Check Image Exists
         id: checkImageExists
         env:
@@ -39,6 +48,7 @@ jobs:
     name: Test
     needs: [ prepare ]
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
 
     steps:
       - name: 📚 Checkout
@@ -66,8 +76,9 @@ jobs:
 
   transpile:
     name: Transpile
-    needs: [ prepare, test ]
+    needs: [ prepare ]
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
 
     steps:
       - name: 📚 Checkout
@@ -95,8 +106,9 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [ prepare, test, transpile ]
+    needs: [ prepare, transpile ]
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
 
     steps:
       - name: 📚 Checkout
@@ -142,3 +154,11 @@ jobs:
           labels: ${{ steps.generateMetadata.outputs.labels }}
           pull: true
           push: true
+
+      - name: 🚀 Release
+        uses: ncipollo/release-action@v1
+        with:
+          body: "${{ needs.prepare.outputs.changelog }}"
+          commit: ${{ env.GITHUB_SHA }}
+          tag: "v${{ needs.prepare.outputs.buildVersion }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
