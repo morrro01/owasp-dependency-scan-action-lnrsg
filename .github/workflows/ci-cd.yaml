@@ -7,7 +7,6 @@ on:
 jobs:
   prepare:
     name: Prepare
-    if: github.repository_owner == 'morrro01'
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.extractImageVersion.outputs.image }}
@@ -39,7 +38,6 @@ jobs:
   test:
     name: Test
     needs: [ prepare ]
-    if: github.repository_owner == 'morrro01' and needs.prepare.outputs.imageExists != 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -69,7 +67,6 @@ jobs:
   transpile:
     name: Transpile
     needs: [ prepare, test ]
-    if: github.repository_owner == 'morrro01' and needs.prepare.outputs.imageExists != 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -98,8 +95,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [ prepare ]
-    if: github.repository_owner == 'morrro01' and needs.prepare.outputs.imageExists != 'true'
+    needs: [ prepare, test, transpile ]
     runs-on: ubuntu-latest
 
     steps:
