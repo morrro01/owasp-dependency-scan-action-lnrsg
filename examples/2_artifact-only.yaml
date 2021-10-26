@@ -1,0 +1,42 @@
+#
+# Basic example for executing an OWASP dependency scan against an application
+# built with Microsoft's .NET platform without commenting on a triggering pull
+# request.
+#
+# This scan configuration will:
+# - Execute against the default .NET build output directory.
+# - Generate an HTML vulnerability report.
+# - Disable commenting on the triggering pull request with a summary.
+# - Upload the generated report as a workflow artifact for 90 days.
+# - Fail the job if any high-severity vulnerabilities are found.
+#
+name: Artifact-Only Example
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  scan:
+    name: Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📚 Checkout
+        uses: actions/checkout@v2
+
+      - name: 🔨 Build w/ .NET      
+        run: dotnet build --configuration Release
+
+      - name: ⚔️ OWASP
+        uses: morrro01/owasp-dependency-scan-action-lnrsg@v1
+        with:
+          project: 'My Application'
+          path: '.'
+          format: 'HTML'
+          scan_args: >
+            --failOnCVSS 7
+            --enableRetired
+          comment_on_pr: false
+          artifact_name: 'OWASP Report'
+          artifact_retention_days: 90

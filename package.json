@@ -1,0 +1,41 @@
+{
+    "name": "owasp-dependency-scan-action-lnrsg",
+    "version": "1.0.0",
+    "main": "lib/index.js",
+    "repository": "https://github.com/morrro01/owasp-dependency-scan-action-lnrsg.git",
+    "author": "morrro01 <robert.morrow@lexisnexisrisk.com>",
+    "license": "MIT",
+    "scripts": {
+        "build": "ncc build src/main.ts -o lib",
+        "format": "prettier --write **/*.ts",
+        "format-check": "prettier --check **/*.ts",
+        "test": "jest --coverage",
+        "test-ci": "jest --ci --reporters=default --reporters=jest-junit",
+        "pre-checkin": "yarn run format && yarn run build"
+    },
+    "jest-junit": {
+        "suiteName": "Jest Tests",
+        "outputDirectory": "./jest-junit",
+        "outputName": "junit.xml"
+    },
+    "devDependencies": {
+        "@types/jest": "^27.0.2",
+        "@vercel/ncc": "^0.31.1",
+        "jest": "^27.3.1",
+        "jest-circus": "^27.3.1",
+        "jest-junit": "^13.0.0",
+        "jest-runtime": "^27.3.1",
+        "prettier": "^2.4.1",
+        "ts-jest": "^27.0.7",
+        "typescript": "^4.4.4",
+        "typescript-formatter": "^7.2.2"
+    },
+    "dependencies": {
+        "@actions/artifact": "^0.5.2",
+        "@actions/core": "^1.6.0",
+        "@actions/exec": "^1.1.0",
+        "@actions/github": "^5.0.0",
+        "@actions/io": "^1.1.1",
+        "@types/node": "^16.11.1"
+    }
+}

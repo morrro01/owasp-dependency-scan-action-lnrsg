@@ -1,0 +1,54 @@
+name: 'OWASP Dependency Scan Action'
+description: 'GitHub action for generating an OWASP dependency scan.'
+author: 'morrro01 <robert.morrow@lexisnexisrisk.com>'
+
+branding:
+  icon: 'shield'
+  color: 'green'
+
+inputs:
+  github_token:
+    description: 'GitHub API token with repository access.'
+    default: ${{ github.token }}
+    required: false
+  project:
+    description: 'Name of the project to be scanned.'
+    required: true
+  path:
+    description: 'Workspace path containing assets to be scanned.'
+    required: true
+  format:
+    description: 'One or more output formats to generate as a comma-delimited value; options: XML, HTML, CSV, JSON, JUNIT, SARIF.'
+    default: 'JSON'
+    required: false
+  scan_args:
+    description: 'Additional arguments passed to the dependency scanner.'
+    required: false
+  comment_on_pr:
+    description: 'Whether to comment Pull Requests with the scan summary; one of: true, false.'
+    default: true
+    required: false
+  comment_title:
+    description: 'Title of Pull Request comments, if enabled.'
+    default: 'OWASP Scan Results'
+    required: false
+  upload_artifact:
+    description: 'Whether to upload the generated scan report(s) as an artifact; one of: true, false.'
+    default: true
+    required: false
+  artifact_name:
+    description: 'Name given to the uploaded scan report artifact, if enabled.'
+    default: 'OWASP Report'
+    required: false
+  artifact_retention_days:
+    description: 'Number of days to retain the uploaded scan report artifact, if enabled.'
+    default: 30
+    required: false
+  failure_mode:
+    description: 'If provided, fails the workflow based on the presence of vulnerability severity; one of: "none", "high", "medium", "low".'
+    default: 'high'
+    required: false
+
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/morrro01/owasp-dependency-scan-action-lnrsg:v1.0'
