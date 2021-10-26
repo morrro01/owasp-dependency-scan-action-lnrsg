@@ -1,0 +1,38 @@
+#
+# Basic example for executing an OWASP dependency scan against an application
+# built with Microsoft's .NET platform.
+#
+# This scan configuration will:
+# - Execute against the default .NET build output directory.
+# - Generate a JSON vulnerability report.
+# - Add a comment to the triggering pull request with a summary.
+# - Upload the generated report as a workflow artifact for 30 days.
+# - Fail the job if any high-severity vulnerabilities are found.
+#
+name: Basic .NET Example
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  scan:
+    name: Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📚 Checkout
+        uses: actions/checkout@v2
+
+      - name: 🔨 Build w/ .NET      
+        run: dotnet build --configuration Release
+
+      - name: ⚔️ OWASP
+        uses: morrro01/owasp-dependency-scan-action-lnrsg@v1
+        with:
+          project: 'My Application'
+          path: './bin/Release/net5.0'
+          format: 'JSON'
+          scan_args: >
+            --failOnCVSS 7
+            --enableRetired

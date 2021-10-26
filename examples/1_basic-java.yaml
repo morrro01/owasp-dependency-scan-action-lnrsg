@@ -1,0 +1,38 @@
+#
+# Basic example for executing an OWASP dependency scan against an application
+# built with Java using Maven.
+#
+# This scan configuration will:
+# - Execute against the root GitHub workspace directory.
+# - Generate a JSON vulnerability report.
+# - Add a comment to the triggering pull request with a summary.
+# - Upload the generated report as a workflow artifact for 30 days.
+# - Fail the job if any high-severity vulnerabilities are found.
+#
+name: Basic Java Example
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  scan:
+    name: Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📚 Checkout
+        uses: actions/checkout@v2
+
+      - name: 🔨 Build w/ Maven      
+        run: mvn clean install
+
+      - name: ⚔️ OWASP
+        uses: morrro01/owasp-dependency-scan-action-lnrsg@v1
+        with:
+          project: 'My Application'
+          path: '.'
+          format: 'JSON'
+          scan_args: >
+            --failOnCVSS 7
+            --enableRetired
