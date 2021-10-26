@@ -213,11 +213,11 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'failure_mode', value: 'none' }
         ],
         output: [
-            '--project Test Project',
-            '--scan .',
-            `--out ${SCAN_OUTPUT_PATH}`,
-            '--noupdate',
-            '--format JSON'
+            `--project 'Test Project'`,
+            `--scan '.'`,
+            `--out '${SCAN_OUTPUT_PATH}'`,
+            `--format 'JSON'`,
+            '--noupdate'
         ]
     },
     {
@@ -233,11 +233,11 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'failure_mode', value: 'none' }
         ],
         output: [
-            '--project Test Project',
-            '--scan .',
-            `--out ${SCAN_OUTPUT_PATH}`,
+            `--project 'Test Project'`,
+            `--scan '.'`,
+            `--out '${SCAN_OUTPUT_PATH}'`,
+            `--format 'JSON'`,
             '--noupdate',
-            '--format JSON',
             '--failOnCVSS 7',
             '--enableRetired'
         ]
@@ -256,16 +256,11 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'failure_mode', value: 'none' }
         ],
         output: [
-            '--project Test Project',
-            '--scan .',
-            `--out ${SCAN_OUTPUT_PATH}`,
+            `--project 'Test Project'`,
+            `--scan '.'`,
+            `--out '${SCAN_OUTPUT_PATH}'`,
+            `--format 'JSON,HTML,XML,CSV,JUNIT,SARIF'`,
             '--noupdate',
-            '--format JSON',
-            '--format HTML',
-            '--format XML',
-            '--format CSV',
-            '--format JUNIT',
-            '--format SARIF',
             '--failOnCVSS 7',
             '--enableRetired'
         ]
@@ -283,7 +278,7 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'upload_artifact', value: 'false' },
             { name: 'failure_mode', value: 'none' }
         ],
-        output: `--project Test Project --scan . --out ${SCAN_OUTPUT_PATH} --noupdate --format JSON --format HTML --format XML --format CSV --format JUNIT --format SARIF --failOnCVSS 7 --enableRetired`
+        output: `--project 'Test Project' --scan '.' --out '${SCAN_OUTPUT_PATH}' --format 'JSON,HTML,XML,CSV,JUNIT,SARIF' --noupdate --failOnCVSS 7 --enableRetired`
     }
 ];
 
