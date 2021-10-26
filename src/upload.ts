@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as artifact from '@actions/artifact';
-import * as fsp from 'fs/promises';
+import { promises as fsp } from 'fs';
 import * as path from 'path';
 import { IActionInputs } from './types';
 import * as constants from './constants';

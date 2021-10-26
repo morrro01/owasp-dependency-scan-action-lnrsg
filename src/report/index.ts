@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import * as fsp from 'fs/promises';
+import { promises as fsp } from 'fs';
 import { IReport } from './types';
 export * from './types';
 

@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-import * as fsp from 'fs/promises';
+import { promises as fsp } from 'fs';
 import { IActionInputs } from './types';
 import * as inputs from './inputs';
 import {
