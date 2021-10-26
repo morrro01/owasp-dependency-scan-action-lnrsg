@@ -54,7 +54,7 @@ jobs:
       - name: 📦 Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: lib
+          name: action-artifact
           retention-days: 1
           path: lib/
 
@@ -97,18 +97,21 @@ jobs:
       - name: 📦 Fetch Artifact
         uses: actions/download-artifact@v2
         with:
-          name: lib
-          path: lib
+          name: action-artifact
+          path: action
 
       - name: Path check
-        run: ls -la
+        run: |
+          ls -la
+          ls action -la
       
       - name: 🐋 Push to GitHub Docker Registry
         uses: docker/build-push-action@v2
         with:
+          context: .
+          file: Dockerfile
           tags: ${{ steps.generateMetadata.outputs.tags }}
           labels: ${{ steps.generateMetadata.outputs.labels }}
-          pull: true
           push: true
 
       - name: 🚀 Release
