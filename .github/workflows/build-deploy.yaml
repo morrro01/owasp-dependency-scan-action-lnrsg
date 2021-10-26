@@ -29,9 +29,38 @@ jobs:
       #  env:
       #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  build:
+    name: Build
+    needs: [ prepare ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📚 Checkout
+        uses: actions/checkout@v2
+
+      - name: 🧱 Cache Dependencies
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles( 'package.json' )}}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: ⚙️ Install Dependencies
+        run: yarn
+
+      - name: 🔨 Build
+        run: yarn build
+
+      - name: 📦 Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: lib
+          retention-days: 1
+          path: lib/
+
   deploy:
     name: Deploy
-    needs: [ prepare ]
+    needs: [ prepare, build ]
     runs-on: ubuntu-latest
 
     steps:
@@ -65,18 +94,11 @@ jobs:
             type=semver,pattern=v{{major}},value=${{ needs.prepare.outputs.imageVersion }}.0
             type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.prepare.outputs.imageVersion }}.0
 
-      - name: 🧱 Cache Dependencies
-        uses: actions/cache@v2
+      - name: 📦 Fetch Artifact
+        uses: actions/download-artifact@v2
         with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles( 'package.json' )}}
-          restore-keys: ${{ runner.os }}-node-
-
-      - name: ⚙️ Install Dependencies
-        run: yarn
-
-      - name: 🔨 Build
-        run: yarn build
+          name: lib
+          path: lib
       
       - name: 🐋 Push to GitHub Docker Registry
         uses: docker/build-push-action@v2
