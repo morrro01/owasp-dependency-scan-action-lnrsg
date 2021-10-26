@@ -99,6 +99,9 @@ jobs:
         with:
           name: lib
           path: lib
+
+      - name: Path check
+        run: ls -la
       
       - name: 🐋 Push to GitHub Docker Registry
         uses: docker/build-push-action@v2
