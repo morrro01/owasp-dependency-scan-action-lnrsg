@@ -99,11 +99,6 @@ jobs:
         with:
           name: action-artifact
           path: action
-
-      - name: Path check
-        run: |
-          ls -la
-          ls action -la
       
       - name: 🐋 Push to GitHub Docker Registry
         uses: docker/build-push-action@v2
@@ -119,5 +114,5 @@ jobs:
         with:
           #body: "${{ needs.prepare.outputs.changelog }}"
           commit: ${{ env.GITHUB_SHA }}
-          tag: "v${{ needs.prepare.outputs.imageVersion }}"
+          tag: "${{ needs.prepare.outputs.imageVersion }}"
           token: ${{ secrets.GITHUB_TOKEN }}
