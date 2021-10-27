@@ -213,10 +213,10 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'failure_mode', value: 'none' }
         ],
         output: [
-            `--project 'Test Project'`,
-            `--scan '.'`,
-            `--out '${SCAN_OUTPUT_PATH}'`,
-            `--format 'JSON'`,
+            `--project Test Project`,
+            `--scan .`,
+            `--out ${SCAN_OUTPUT_PATH}`,
+            `--format JSON`,
             '--noupdate'
         ]
     },
@@ -233,10 +233,10 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'failure_mode', value: 'none' }
         ],
         output: [
-            `--project 'Test Project'`,
-            `--scan '.'`,
-            `--out '${SCAN_OUTPUT_PATH}'`,
-            `--format 'JSON'`,
+            `--project Test Project`,
+            `--scan .`,
+            `--out ${SCAN_OUTPUT_PATH}`,
+            `--format JSON`,
             '--noupdate',
             '--failOnCVSS 7',
             '--enableRetired'
@@ -256,10 +256,10 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'failure_mode', value: 'none' }
         ],
         output: [
-            `--project 'Test Project'`,
-            `--scan '.'`,
-            `--out '${SCAN_OUTPUT_PATH}'`,
-            `--format 'JSON,HTML,XML,CSV,JUNIT,SARIF'`,
+            `--project Test Project`,
+            `--scan .`,
+            `--out ${SCAN_OUTPUT_PATH}`,
+            `--format JSON,HTML,XML,CSV,JUNIT,SARIF`,
             '--noupdate',
             '--failOnCVSS 7',
             '--enableRetired'
@@ -278,7 +278,7 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'upload_artifact', value: 'false' },
             { name: 'failure_mode', value: 'none' }
         ],
-        output: `--project 'Test Project' --scan '.' --out '${SCAN_OUTPUT_PATH}' --format 'JSON,HTML,XML,CSV,JUNIT,SARIF' --noupdate --failOnCVSS 7 --enableRetired`
+        output: `--project Test Project --scan . --out ${SCAN_OUTPUT_PATH} --format JSON,HTML,XML,CSV,JUNIT,SARIF --noupdate --failOnCVSS 7 --enableRetired`
     }
 ];
 

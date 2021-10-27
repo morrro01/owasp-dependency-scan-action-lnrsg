@@ -9,10 +9,15 @@ export const REPORT_FILENAME_PREFIX = 'dependency-check-report';
 export const SCAN_PATH = '/usr/share/dependency-check/bin/dependency-check.sh';
 
 /**
+ * Path to the root of the GitHub workspace.
+ */
+export const GITHUB_WORKSPACE = process.env[ 'GITHUB_WORKSPACE' ] || '/github/workspace';
+
+/**
  * Output location in which the dependency scanner should place any generated
  * reports.
  */
-export const SCAN_OUTPUT_PATH = '/github/workspace/reports';
+export const SCAN_OUTPUT_PATH = `${GITHUB_WORKSPACE}/reports`;
 
 /**
  * Full expected path to the JSON report file.
