@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import * as path from 'path';
 import { SCAN_OUTPUT_PATH } from "../src/constants";
 import {
     FailureMode,
@@ -77,6 +78,11 @@ export const resetActionInputs = () => {
 //
 // MOCK DATA
 //
+
+/**
+ * Mock generated JSON report.
+ */
+export const MockGeneratedReportPath = path.join( __dirname, 'mock.json' );
 
 /**
  * inputs.test.ts
@@ -213,11 +219,11 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'failure_mode', value: 'none' }
         ],
         output: [
-            `--project Test Project`,
+            `--project "Test Project"`,
             `--scan .`,
             `--out ${SCAN_OUTPUT_PATH}`,
-            `--format JSON`,
-            '--noupdate'
+            '--noupdate',
+            `--format JSON`            
         ]
     },
     {
@@ -233,11 +239,11 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'failure_mode', value: 'none' }
         ],
         output: [
-            `--project Test Project`,
+            `--project "Test Project"`,
             `--scan .`,
             `--out ${SCAN_OUTPUT_PATH}`,
-            `--format JSON`,
             '--noupdate',
+            `--format JSON`,
             '--failOnCVSS 7',
             '--enableRetired'
         ]
@@ -256,11 +262,16 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'failure_mode', value: 'none' }
         ],
         output: [
-            `--project Test Project`,
+            `--project "Test Project"`,
             `--scan .`,
             `--out ${SCAN_OUTPUT_PATH}`,
-            `--format JSON,HTML,XML,CSV,JUNIT,SARIF`,
             '--noupdate',
+            `--format JSON`,
+            `--format HTML`,
+            `--format XML`,
+            `--format CSV`,
+            `--format JUNIT`,
+            `--format SARIF`,
             '--failOnCVSS 7',
             '--enableRetired'
         ]
@@ -278,7 +289,7 @@ export const ValidScannerArgsTests: IActionInputsScannerArgsTest[] = [
             { name: 'upload_artifact', value: 'false' },
             { name: 'failure_mode', value: 'none' }
         ],
-        output: `--project Test Project --scan . --out ${SCAN_OUTPUT_PATH} --format JSON,HTML,XML,CSV,JUNIT,SARIF --noupdate --failOnCVSS 7 --enableRetired`
+        output: `--project "Test Project" --scan . --out ${SCAN_OUTPUT_PATH} --noupdate --format JSON --format HTML --format XML --format CSV --format JUNIT --format SARIF --failOnCVSS 7 --enableRetired`
     }
 ];
 

@@ -97,5 +97,10 @@ export const severityCount = ( summaries: ISummaryVulnerableDependency[], severi
  */
 export const packageVulnerabilityMarkdown = ( values: ISummaryVulnerableDependencyData[] ): string =>
     values
-        .map( value => value.url ? `[${value.name}](${value.url})` : value.name )
+        .map( value => {
+            
+            // Wrap the text in tildes to prevent GitHub rendering emoji.
+            const name = '`' + value.name + '`';
+            return value.url ? `[${name}](${value.url})` : name;
+        })
         .join( '<br />' );
