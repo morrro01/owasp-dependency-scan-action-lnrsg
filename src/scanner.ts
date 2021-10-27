@@ -18,10 +18,11 @@ export async function scan( params: IActionInputs ): Promise<void> {
     core.startGroup( '🔬 OWASP Scan' );
 
     try {
-        const args = inputs.getScannerArgs( params );
+        const args = inputs.getScannerArgsString( params );
+        const cmd = `${SCAN_PATH} ${args}`;
 
-        core.info( `Command: '${SCAN_PATH} ${args.join( ' ' )}'` );
-        await exec.exec( SCAN_PATH, args );
+        core.info( `Command: '${cmd}'` );
+        await exec.exec( cmd );
 
         const generated = await didReportsGenerate();
         if ( !generated )
