@@ -31,7 +31,7 @@ describe( 'scan', () => {
 
         // Call it.
         await scanner.scan( parsed );
-        const cmd = `${SCAN_PATH} --project Test Project --scan . --out ${SCAN_OUTPUT_PATH} --format JSON --noupdate`;
+        const cmd = `${SCAN_PATH} --project "Test Project" --scan . --out ${SCAN_OUTPUT_PATH} --noupdate --format JSON`;
         expect( spy ).toHaveBeenCalledWith( cmd );
     })
 });

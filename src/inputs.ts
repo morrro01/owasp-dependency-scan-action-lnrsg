@@ -93,12 +93,14 @@ export function getInputs(): IActionInputs {
  */
 export function getScannerArgs( inputs: IActionInputs ): string[] {
     let args: string[] = [
-        `--project ${inputs.project}`,
+        `--project "${inputs.project}"`,
         `--scan ${inputs.path}`,
         `--out ${SCAN_OUTPUT_PATH}`,
-        `--format ${inputs.format.join( ',' )}`,
         `--noupdate`
     ];
+
+    inputs.format.forEach( format =>
+        args.push( `--format ${format}` ));
 
     if ( inputs.scan_args )
         inputs.scan_args.forEach( arg => args.push( arg ));

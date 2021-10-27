@@ -42,6 +42,8 @@ export async function generate( params: IActionInputs ): Promise<summary.ISummar
     }
 
     core.endGroup();
+    
+    return parsedSummary;
 }
 
 /**

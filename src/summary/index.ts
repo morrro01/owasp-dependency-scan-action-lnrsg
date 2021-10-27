@@ -35,11 +35,11 @@ export function getSummaryMarkdown( title: string, summary: ISummary ): string {
 
 |||
 |---|---|
-|**📦 Project:**|${summary.project}|
-|**🩺 Scanned Dependencies:**|${summary.counts.scanned}|
-|**🔥&nbsp;&nbsp;High Severity:**|${summary.counts.high}|
-|**⚠️ Medium Severity:**|${summary.counts.medium}|
-|**✔️ Low Severity:**|${summary.counts.low}|
+|**📦 Project**|${summary.project}|
+|**🩺 Scanned Dependencies**|${summary.counts.scanned}|
+|**🔥&nbsp;&nbsp;High Severity**|${summary.counts.high}|
+|**⚠️ Medium Severity**|${summary.counts.medium}|
+|**✔️ Low Severity**|${summary.counts.low}|
 
 #### Summary
 
