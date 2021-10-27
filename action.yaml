@@ -51,4 +51,4 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/morrro01/owasp-dependency-scan-action-lnrsg:v1.0.2'
+  image: 'docker://ghcr.io/morrro01/owasp-dependency-scan-action-lnrsg:v1.0.3'

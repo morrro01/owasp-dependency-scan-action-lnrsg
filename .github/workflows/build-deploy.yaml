@@ -9,7 +9,7 @@ jobs:
     name: Prepare
     runs-on: ubuntu-latest
     outputs:
-      #changelog: ${{ steps.extractChangelog.outputs.changelog }}
+      changelog: ${{ steps.extractChangelog.outputs.changelog }}
       imageVersion: ${{ steps.extractImageVersion.outputs.version }}
 
     steps:
@@ -23,11 +23,11 @@ jobs:
           version=$(cut -d : -f 2 <<< "$image")
           echo "::set-output name=version::$version"
 
-      #- name: ⛏️ Extract Changelog
-      #  id: extractChangelog
-      #  uses: mikepenz/release-changelog-builder-action@v2.4.1
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: ⛏️ Extract Changelog
+        id: extractChangelog
+        uses: mikepenz/release-changelog-builder-action@v2.4.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
     name: Build
@@ -93,6 +93,7 @@ jobs:
             type=match,pattern=(v\d+.\d+.\d+),group=1
             type=semver,pattern=v{{major}},value=${{ needs.prepare.outputs.imageVersion }}.0
             type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.prepare.outputs.imageVersion }}.0
+            type=semver,pattern=v{{major}}.{{minor}}.{{patch}},value=${{ needs.prepare.outputs.imageVersion }}
 
       - name: 📦 Fetch Artifact
         uses: actions/download-artifact@v2
@@ -112,7 +113,7 @@ jobs:
       - name: 🚀 Release
         uses: ncipollo/release-action@v1
         with:
-          #body: "${{ needs.prepare.outputs.changelog }}"
+          body: "${{ needs.prepare.outputs.changelog }}"
           commit: ${{ env.GITHUB_SHA }}
           tag: "${{ needs.prepare.outputs.imageVersion }}"
           token: ${{ secrets.GITHUB_TOKEN }}
