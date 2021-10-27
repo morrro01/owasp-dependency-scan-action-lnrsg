@@ -60,6 +60,34 @@ The following is a complete listing of options supported by the action using the
 | `artifact_retention_days` | ❌ | `30` | Number of days to retain the workflow artifact if `upload_artifact` is `true`.<br/><br/>**Note:** GitHub will honor this value so long as it falls within any enterprise or organizational constraints, if applicable (e.g., if your organization has a maximum retention of 7 days, providing a value of 30 days will be ignored). |
 | `failure_mode` | ❌ | `'high'` | If provided, fails the job if any vulnerabilities of a given severity are detected. To disable this - and allow the workflow to proceed regardless of detected vulnerabilities - use a value of `'none'`.<br/><br/>**Options:** none, low, medium, high<br/><br/>**Note:** this check can only be accommodated if the value of `format` includes `'JSON'`. Other formats can also be used, but JSON is required for generating a parsed summary for detection. |
 
+## Pull Request Comments
+
+When `comment_on_pr` is enabled, a summary of the scan results will be injected into a Pull Request comment containing an overview with at-a-glance count information along with a summary of specific vulnerable dependencies. 
+
+![Example PR Comment](/.github/images/example-pr-comment.jpg)
+
+The following is a legend of the information presented in a summary:
+
+**Overview**
+- **Project:** the name of the project as provided via the `project` configuration value.
+- **Scanned Dependencies:** a count of the project dependencies that the scanner detected and validated.
+- **High Severity:** a count of found vulnerabilities considered high.
+- **Medium Severity:** a count of found vulnerabilities considered moderate.
+- **Low Severity:** a count of found vulnerabilities considered low.
+
+**Summary**
+
+For each row of the table:
+- **File:** filename of a dependency with one or more vulnerabilities.
+- **IDs:** one or more vulnerability IDs associated with the dependency; if available, links to the [NIST](https://www.nist.gov/) vulnerability detail page are included.
+- **Pkgs:** one or more package IDs associated with the dependency; if available, links to the [OSS Index](https://ossindex.sonatype.org/) package detail page are included.
+- **Sev:** the highest severity of vulnerability found for the dependency.
+- **CI:** the highest confidence found for the dependency's vulnerabilities.
+- **CVE:** a count of found vulnerabilities for the dependency.
+- **Evid:** a count of evidentiary sources for the dependency's vulnerabilities.
+
+The summary may be enough for most needs, but in cases where more granular detail is desired it's recommended to use `'JSON,HTML'` as the `format`, and ensure that `upload_artifact` is enabled. This will generate an artifact containing a more detailed report that can be downloaded from the bottom of your workflow's Summary view.
+
 ## Credits
 
 This GitHub action is conceptually a composite of a few other actions combined into a single functionality.
